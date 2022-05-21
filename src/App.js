@@ -1,25 +1,99 @@
-import logo from './logo.svg';
-import './App.css';
+import "./style/style.scss";
+import Maze from "./components/maze";
+import { useState, useEffect } from "react";
 
-function App() {
+const App = () => {
+  const [rowCol, setRowCol] = useState({
+    col: 0,
+    row: 0,
+  });
+  const [maze, setMaze] = useState([]);
+  const [coordinate, setCoordinate] = useState({ x: 0, y: 0 });
+  const onChange = (e) => {
+    const { value, name } = e.target;
+    if (value > 100) {
+      console.log("너무큼");
+      return;
+    }
+    setRowCol({
+      ...rowCol,
+      [name]: value < 1 ? 1 : Number(value),
+    });
+  };
+  const onKeyDown = (e) => {
+    const MAX_X = rowCol.col;
+    const MAX_Y = rowCol.row;
+    const x = coordinate.x;
+    const y = coordinate.y;
+    switch (e.code) {
+      case "ArrowDown":
+        if (y + 1 < MAX_Y && y + 1 >= 0 && maze[coordinate.y + 1][x].item) {
+          setCoordinate({ x: x, y: y + 1 });
+        }
+        break;
+      case "ArrowUp":
+        if (y - 1 < MAX_Y && y - 1 >= 0 && maze[y - 1][x].item) {
+          setCoordinate({ x: x, y: y - 1 });
+        }
+        break;
+      case "ArrowLeft":
+        if (x - 1 < MAX_X && x - 1 >= 0 && maze[y][x - 1].item) {
+          setCoordinate({ x: x - 1, y: y });
+        }
+        break;
+      case "ArrowRight":
+        if (x + 1 < MAX_X && x + 1 >= 0 && maze[y][x + 1].item) {
+          setCoordinate({ x: x + 1, y: y });
+        }
+        break;
+      default:
+    }
+  };
+
+  useEffect(() => {
+    let bricksIndex = -1;
+    setMaze(
+      [...new Array(rowCol.col)].map(() => {
+        return [...new Array(rowCol.row)].map(() => {
+          bricksIndex++;
+          return {
+            index: bricksIndex,
+            item: true,
+          };
+        });
+      })
+    );
+    // document.querySelectorAll(".maze td > div").forEach((div) => {
+    //   const px = (window.innerHeight - 200) / rowCol.row + "px";
+    //   div.style.width = px;
+    //   div.style.height = px;
+    // });
+  }, [rowCol]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App" onKeyDown={onKeyDown} tabIndex="0">
+      <p className="header">Maze</p>
+      <input
+        className="col"
+        name="col"
+        onChange={onChange}
+        value={rowCol.col}
+      />
+      <input
+        className="row"
+        name="row"
+        onChange={onChange}
+        value={rowCol.row}
+      />
+      <Maze
+        coordinate={coordinate}
+        setCoordinate={setCoordinate}
+        maze={maze}
+        setMaze={setMaze}
+        rowCol={rowCol}
+      />
     </div>
   );
-}
+};
 
 export default App;
