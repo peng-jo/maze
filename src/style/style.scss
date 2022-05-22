@@ -4,19 +4,50 @@
     font-weight: normal;
     font-style: normal;
 }
+@font-face {
+    font-family: 'ChosunSg';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/ChosunSg.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'ChosunBg';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/ChosunBg.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
 body {
+    font-family: 'ChosunSg';
     background-color: #eee;
     .header {
-        font-family: 'TmonMonsori';
+        font-family: 'ChosunBg';
         font-size: 30px;
     }
     .info {
         font-size: 12px;
     }
+    .cursor {
+        cursor: Crosshair;
+    }
+    .mr {
+        display: inline-block;
+        margin-right: 20px;
+    }
+    input {
+        padding: 4px 8px 4px 2px;
+        margin:10px 10px 0 0;
+        border: none;
+        &.button {
+            background-color: #c9c9c9;
+            font-size: 12px;
+        }
+        &.input {
+            width: 30px;
+            margin: 10px 8px 0 8px;
+        }
+    }
 }
-.cursor {
-    cursor: Crosshair;
-}
+
 .maze {
     border: 1px solid #000;
     border-spacing: 0px;
@@ -31,7 +62,7 @@ body {
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 0.1px solid rgb(0, 0, 0);
+            border: 0.05px solid rgb(0, 0, 0);
         }
         .bricks {
             background-color: rgb(201, 201, 201);
@@ -42,6 +73,10 @@ body {
             background-color: rgba(255, 255, 54, 0.882);
             border-radius: 50px;
             border: none;
+        }
+        .line {
+            border: none;
+            background-color: rgb(164, 49, 49);
         }
     }
 }

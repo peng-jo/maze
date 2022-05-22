@@ -1,6 +1,6 @@
 import "./style/style.scss";
 import Maze from "./components/maze";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 const App = () => {
   const [rowCol, setRowCol] = useState({
@@ -72,19 +72,24 @@ const App = () => {
 
   return (
     <div className="App" onKeyDown={onKeyDown} tabIndex="0">
-      <p className="header">Maze</p>
+      <p className="header">미로 게임</p>
+      세로
       <input
-        className="col"
+        className="col input"
         name="col"
         onChange={onChange}
         value={rowCol.col}
       />
+      <span className="mr">칸</span>
+      가로
       <input
-        className="row"
+        className="row input"
         name="row"
         onChange={onChange}
         value={rowCol.row}
       />
+      <span className="mr">칸</span>
+      <p className="info">👉 99칸 이하로 입력 가능합니다</p>
       <Maze
         coordinate={coordinate}
         setCoordinate={setCoordinate}
