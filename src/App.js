@@ -7,17 +7,24 @@ const App = () => {
     col: 0,
     row: 0,
   });
-  const [maze, setMaze] = useState([]);
+  const [maze, setMaze] = useState({ points: [], mazeMap: [] });
   const [coordinate, setCoordinate] = useState({ x: 0, y: 0 });
   const onChange = (e) => {
     const { value, name } = e.target;
-    if (value > 100) {
+    if (!Number.isInteger(parseInt(value))) {
+      setRowCol({
+        ...rowCol,
+        [name]: 0,
+      });
+      return;
+    }
+    if (value > 99) {
       console.log("너무큼");
       return;
     }
     setRowCol({
       ...rowCol,
-      [name]: value < 1 ? 1 : Number(value),
+      [name]: value < 1 ? 1 : parseInt(value),
     });
   };
   const onKeyDown = (e) => {
@@ -27,22 +34,26 @@ const App = () => {
     const y = coordinate.y;
     switch (e.code) {
       case "ArrowDown":
-        if (y + 1 < MAX_Y && y + 1 >= 0 && maze[coordinate.y + 1][x].item) {
+        if (
+          y + 1 < MAX_Y &&
+          y + 1 >= 0 &&
+          maze.mazeMap[coordinate.y + 1][x].item
+        ) {
           setCoordinate({ x: x, y: y + 1 });
         }
         break;
       case "ArrowUp":
-        if (y - 1 < MAX_Y && y - 1 >= 0 && maze[y - 1][x].item) {
+        if (y - 1 < MAX_Y && y - 1 >= 0 && maze.mazeMap[y - 1][x].item) {
           setCoordinate({ x: x, y: y - 1 });
         }
         break;
       case "ArrowLeft":
-        if (x - 1 < MAX_X && x - 1 >= 0 && maze[y][x - 1].item) {
+        if (x - 1 < MAX_X && x - 1 >= 0 && maze.mazeMap[y][x - 1].item) {
           setCoordinate({ x: x - 1, y: y });
         }
         break;
       case "ArrowRight":
-        if (x + 1 < MAX_X && x + 1 >= 0 && maze[y][x + 1].item) {
+        if (x + 1 < MAX_X && x + 1 >= 0 && maze.mazeMap[y][x + 1].item) {
           setCoordinate({ x: x + 1, y: y });
         }
         break;
@@ -52,8 +63,12 @@ const App = () => {
 
   useEffect(() => {
     let bricksIndex = -1;
-    setMaze(
-      [...new Array(rowCol.col)].map(() => {
+    if (rowCol.col % 2 === 0 || rowCol.row % 2 === 0) {
+      return;
+    }
+    setMaze({
+      ...maze,
+      mazeMap: [...new Array(rowCol.col)].map(() => {
         return [...new Array(rowCol.row)].map(() => {
           bricksIndex++;
           return {
@@ -61,13 +76,8 @@ const App = () => {
             item: true,
           };
         });
-      })
-    );
-    // document.querySelectorAll(".maze td > div").forEach((div) => {
-    //   const px = (window.innerHeight - 200) / rowCol.row + "px";
-    //   div.style.width = px;
-    //   div.style.height = px;
-    // });
+      }),
+    });
   }, [rowCol]);
 
   return (
@@ -89,7 +99,27 @@ const App = () => {
         value={rowCol.row}
       />
       <span className="mr">칸</span>
-      <p className="info">👉 99칸 이하로 입력 가능합니다</p>
+      <p className="info alert">
+        {(rowCol.col % 2 === 0 || rowCol.row % 2 === 0) &&
+          "가로 혹은 세로값이 짝수입니다"}
+      </p>
+      <p className="info">
+        {rowCol.row < 3 && rowCol.col < 3 ? (
+          <span>
+            👉 <b>가로세로 3칸 이상 홀수</b> 로 입력해주세요
+          </span>
+        ) : (
+          <React.Fragment>
+            <span>
+              👉 <b>가로세로 3칸 이상 홀수</b> 로 입력해주세요
+            </span>
+            <br />
+            <span>
+              👉 <b>99칸 이하로</b> 입력 가능합니다
+            </span>
+          </React.Fragment>
+        )}
+      </p>
       <Maze
         coordinate={coordinate}
         setCoordinate={setCoordinate}

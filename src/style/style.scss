@@ -33,6 +33,10 @@ body {
         display: inline-block;
         margin-right: 20px;
     }
+    .alert {
+        font-weight: 900;
+        color: red;
+    }
     input {
         padding: 4px 8px 4px 2px;
         margin:10px 10px 0 0;
@@ -57,7 +61,7 @@ body {
         padding: 0;
         div {
             position: relative;
-            width: 8px; height: 8px;
+            width: 12px; height: 12px;
             background-color: #000;
             display: flex;
             justify-content: center;
@@ -77,6 +81,13 @@ body {
         .line {
             border: none;
             background-color: rgb(164, 49, 49);
+        }
+        .points {
+            display: inline-block;
+            font-size: 1px;
+            &::before {
+                content: '❤️';
+            }
         }
     }
 }
