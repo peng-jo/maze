@@ -11,7 +11,7 @@ const Maze = (props) => {
     const dfs = (x, y) => {
       const MAX_X = props.maze.mazeMap[0].length;
       const MAX_Y = props.maze.mazeMap.length;
-      const points = [{ x: MAX_X - 1, y: MAX_Y - 1 }];
+      const points = [];
       const queue = [];
       let flag = true;
       const visited = new Array(MAX_Y)
@@ -44,15 +44,11 @@ const Maze = (props) => {
         }
       };
 
-      let test = 0;
       while (flag) {
-        test++;
-        if (test > 100000000) {
-          console.log("over 100000000");
-          flag = false;
+        const length = queue.length;
+        if (length < 1) {
           return false;
         }
-        const length = queue.length;
         for (let k = 0; k < length; k++) {
           const shifted = queue.shift();
           const list = [
@@ -80,13 +76,17 @@ const Maze = (props) => {
               }
               visited[result[j].y][result[j].x] = true;
               if (Math.floor(Math.random() * 20) < 1) {
-                points.push({ x: result[j].x, y: result[j].y });
+                if (result[j].x !== MAX_X - 1 && result[j].y !== MAX_Y - 1) {
+                  points.push({ x: result[j].x, y: result[j].y });
+                }
               }
             }
           }
         }
       }
       props.setMaze({
+        ...props.maze,
+        end: { x: MAX_X - 1, y: MAX_Y - 1 },
         points: points,
         mazeMap: props.maze.mazeMap.map((arr, y) => {
           return arr.map((el, x) => {
@@ -149,14 +149,8 @@ const Maze = (props) => {
             return { r: false };
           }
         };
-        // let test = 0;
-        while (flag) {
-          // test++;
-          // if (test > 100) {
-          //   console.log("test over 100");
-          //   flag = false;
-          // }
 
+        while (flag) {
           const length = queue.length;
           if (length < 1) {
             return false;
@@ -316,7 +310,9 @@ const Maze = (props) => {
           ? "자동으로 움직일 곳을 클릭해 주세요"
           : "클릭하면 벽을 만들거나 없앨수 있습니다."}
       </p>
-      <p className="info">❤️ x {props.maze.points.length}</p>
+      <p className="info">
+        <i className="fa-solid fa-heart"></i> x {props.maze.points.length}
+      </p>
       <table className="maze">
         <thead></thead>
         <tbody>
@@ -353,7 +349,14 @@ const Maze = (props) => {
                         >
                           {props.maze.points.findIndex(
                             (v) => v.x === x && v.y === y
-                          ) !== -1 && <span className="points"></span>}
+                          ) !== -1 && (
+                            <i className="fa-solid fa-heart points"></i>
+                          )}
+                          {props.maze.end.x === x && props.maze.end.y === y ? (
+                            <i className="fa-solid fa-person-running points"></i>
+                          ) : (
+                            ""
+                          )}
                         </div>
                       )}
                     </div>

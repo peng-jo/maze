@@ -7,7 +7,12 @@ const App = () => {
     col: 0,
     row: 0,
   });
-  const [maze, setMaze] = useState({ points: [], mazeMap: [] });
+  const [maze, setMaze] = useState({
+    points: [],
+    mazeMap: [],
+    end: { x: 0, y: 0 },
+    start: { x: 0, y: 0 },
+  });
   const [coordinate, setCoordinate] = useState({ x: 0, y: 0 });
   const onChange = (e) => {
     const { value, name } = e.target;

@@ -85,9 +85,7 @@ body {
         .points {
             display: inline-block;
             font-size: 1px;
-            &::before {
-                content: '❤️';
-            }
+            color: #fff;
         }
     }
 }
