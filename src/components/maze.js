@@ -278,7 +278,6 @@ const Maze = (props) => {
   };
 
   useEffect(() => {
-    console.log("props");
     const pointsIndex = props.maze.points.findIndex(
       (v) => v.x === props.maze.coordinate.x && v.y === props.maze.coordinate.y
     );
@@ -331,7 +330,7 @@ const Maze = (props) => {
       <table className="maze">
         <thead></thead>
         <tbody>
-          <VisualizeMaze maze={props.maze} onClick={onClick} moving={moving} />
+          <VisualizeMaze maze={props.maze} moving={moving} />
         </tbody>
       </table>
     </div>

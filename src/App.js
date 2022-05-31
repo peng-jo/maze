@@ -119,27 +119,6 @@ const App = () => {
         value={rowCol.row}
       />
       <span className="mr">칸</span>
-      <p className="info alert">
-        {(rowCol.col % 2 === 0 || rowCol.row % 2 === 0) &&
-          "가로 혹은 세로값이 짝수입니다"}
-      </p>
-      <p className="info">
-        {rowCol.row < 3 && rowCol.col < 3 ? (
-          <span>
-            👉 <b>가로세로 3칸 이상 홀수</b> 로 입력해주세요
-          </span>
-        ) : (
-          <React.Fragment>
-            <span>
-              👉 <b>가로세로 3칸 이상 홀수</b> 로 입력해주세요
-            </span>
-            <br />
-            <span>
-              👉 <b>99칸 이하로</b> 입력 가능합니다
-            </span>
-          </React.Fragment>
-        )}
-      </p>
       <Maze maze={maze} setMaze={setMaze} rowCol={rowCol} />
     </div>
   );

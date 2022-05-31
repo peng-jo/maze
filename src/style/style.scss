@@ -16,7 +16,9 @@
     font-weight: normal;
     font-style: normal;
 }
+
 body {
+
     font-family: 'ChosunSg';
     background-color: #eee;
     .header {
@@ -68,6 +70,9 @@ body {
             align-items: center;
             border: 0.05px solid rgb(0, 0, 0);
         }
+        .big {
+            width: 40px; height: 40px;
+        }
         .bricks {
             background-color: rgb(201, 201, 201);
         }
@@ -77,6 +82,10 @@ body {
             background-color: rgba(255, 255, 54, 0.882);
             border-radius: 50px;
             border: none;
+            &.big {
+                width: 20px;
+                height: 20px;
+            }
         }
         .line {
             border: none;
@@ -86,6 +95,15 @@ body {
             display: inline-block;
             font-size: 1px;
             color: #fff;
+            &.big {
+                position: relative;
+                font-size: 20px;
+                &::before {
+                    position: absolute;
+                    top: 50%; left: 50%;
+                    transform: translate(-50%, -50%);
+                }
+            }
         }
     }
 }

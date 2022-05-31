@@ -1,68 +1,74 @@
 import React from "react";
-
+import { uuid } from "../tools/uuid";
 export const VisualizeMaze = (props) => {
   const elements = () => {
     const visualSize = 5;
     const element = [];
     let x = props.maze.coordinate.x;
     let y = props.maze.coordinate.y;
+    let start_x = 0;
+    let start_y = 0;
     const MAX_X = props.maze.mazeMap.length;
     const MAX_Y = props.maze.mazeMap[0]?.length;
-    if (x + visualSize > MAX_X) {
-      x = MAX_X - (x + visualSize);
+    if (x - 2 < 0) {
+      start_x = 0;
+    } else if (x + 2 >= MAX_X) {
+      start_x = MAX_X - visualSize;
+    } else {
+      start_x = x - 2;
     }
-    if (y + visualSize > MAX_Y) {
-      y = MAX_Y - (y + visualSize);
+    if (y - 2 < 0) {
+      start_y = 0;
+    } else if (y + 2 >= MAX_Y) {
+      start_y = MAX_Y - visualSize;
+    } else {
+      start_y = y - 2;
     }
+
     if (MAX_X < 3 || MAX_Y < 3) {
       return;
     }
     const wall = () => {
-      const random = Math.floor(Math.random() * 100000);
       element.push(
-        <tr key={"tr wall " + random}>
-          {new Array(visualSize + 2).fill(
-            <td>
-              <div className="bricks"></div>
+        <tr key={uuid()}>
+          {[...new Array(visualSize + 2)].map((el, index) => (
+            <td key={uuid()}>
+              <div className="bricks big"></div>
             </td>
-          )}
+          ))}
         </tr>
       );
     };
     wall();
-    for (let row = 0; row < visualSize; row++) {
+
+    for (let row = start_y, index = 0; row < start_y + visualSize; row++) {
+      index++;
       element.push(
-        <tr key={"tr" + row}>
+        <tr key={"tr" + row + index}>
           <td>
-            <div className="bricks"></div>
+            <div className="bricks big"></div>
           </td>
           {[...new Array(visualSize)].map((el, col) => {
-            const bricks = props.maze.mazeMap[row][col];
+            const bricks = props.maze.mazeMap[row][col + start_x];
             return (
-              <td
-                key={"td " + bricks.index}
-                data-num={bricks.index}
-                onClick={props.onClick}
-              >
+              <td key={"td " + bricks.index} data-num={bricks.index}>
                 {bricks.item ? (
-                  <div>
-                    {props.maze.coordinate.x === x &&
-                    props.maze.coordinate.y === y ? (
-                      <div className="now"></div>
+                  <div className="big">
+                    {/* {x === col + start_x &&
+                      y === start_y + row &&
+                      console.log("x", x, col + start_x, "y", y, start_y + row)} */}
+                    {x === col + start_x && y === row ? (
+                      <div className="now big"></div>
                     ) : (
-                      <div
-                        data-num={bricks.index}
-                        className={
-                          bricks.line && props.moving.current ? "line" : ""
-                        }
-                      >
+                      <div data-num={bricks.index}>
                         {props.maze.points.findIndex(
-                          (v) => v.x === x && v.y === y
+                          (v) => v.x === col + start_x && v.y === row
                         ) !== -1 && (
-                          <i className="fa-solid fa-heart points"></i>
+                          <i className="fa-solid fa-heart points big"></i>
                         )}
-                        {props.maze.end.x === x && props.maze.end.y === y ? (
-                          <i className="fa-solid fa-person-running points"></i>
+                        {props.maze.end.x === col + start_x &&
+                        props.maze.end.y === row ? (
+                          <i className="fa-solid fa-person-running points big"></i>
                         ) : (
                           ""
                         )}
@@ -70,13 +76,13 @@ export const VisualizeMaze = (props) => {
                     )}
                   </div>
                 ) : (
-                  <div className="bricks"></div>
+                  <div className="bricks big"></div>
                 )}
               </td>
             );
           })}
           <td>
-            <div className="bricks"></div>
+            <div className="bricks big"></div>
           </td>
         </tr>
       );
