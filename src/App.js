@@ -12,8 +12,9 @@ const App = () => {
     mazeMap: [],
     end: { x: 0, y: 0 },
     start: { x: 0, y: 0 },
+    coordinate: { x: 0, y: 0 },
   });
-  const [coordinate, setCoordinate] = useState({ x: 0, y: 0 });
+
   const onChange = (e) => {
     const { value, name } = e.target;
     if (!Number.isInteger(parseInt(value))) {
@@ -35,31 +36,43 @@ const App = () => {
   const onKeyDown = (e) => {
     const MAX_X = rowCol.col;
     const MAX_Y = rowCol.row;
-    const x = coordinate.x;
-    const y = coordinate.y;
+    const x = maze.coordinate.x;
+    const y = maze.coordinate.y;
     switch (e.code) {
       case "ArrowDown":
         if (
           y + 1 < MAX_Y &&
           y + 1 >= 0 &&
-          maze.mazeMap[coordinate.y + 1][x].item
+          maze.mazeMap[maze.coordinate.y + 1][x].item
         ) {
-          setCoordinate({ x: x, y: y + 1 });
+          setMaze({
+            ...maze,
+            coordinate: { x: x, y: y + 1 },
+          });
         }
         break;
       case "ArrowUp":
         if (y - 1 < MAX_Y && y - 1 >= 0 && maze.mazeMap[y - 1][x].item) {
-          setCoordinate({ x: x, y: y - 1 });
+          setMaze({
+            ...maze,
+            coordinate: { x: x, y: y - 1 },
+          });
         }
         break;
       case "ArrowLeft":
         if (x - 1 < MAX_X && x - 1 >= 0 && maze.mazeMap[y][x - 1].item) {
-          setCoordinate({ x: x - 1, y: y });
+          setMaze({
+            ...maze,
+            coordinate: { x: x - 1, y: y },
+          });
         }
         break;
       case "ArrowRight":
         if (x + 1 < MAX_X && x + 1 >= 0 && maze.mazeMap[y][x + 1].item) {
-          setCoordinate({ x: x + 1, y: y });
+          setMaze({
+            ...maze,
+            coordinate: { x: x + 1, y: y },
+          });
         }
         break;
       default:
@@ -67,21 +80,23 @@ const App = () => {
   };
 
   useEffect(() => {
-    let bricksIndex = -1;
     if (rowCol.col % 2 === 0 || rowCol.row % 2 === 0) {
       return;
     }
-    setMaze({
-      ...maze,
-      mazeMap: [...new Array(rowCol.col)].map(() => {
-        return [...new Array(rowCol.row)].map(() => {
-          bricksIndex++;
-          return {
-            index: bricksIndex,
-            item: true,
-          };
-        });
-      }),
+    setMaze((prev) => {
+      let bricksIndex = -1;
+      return {
+        ...prev,
+        mazeMap: [...new Array(rowCol.col)].map(() => {
+          return [...new Array(rowCol.row)].map(() => {
+            bricksIndex++;
+            return {
+              index: bricksIndex,
+              item: true,
+            };
+          });
+        }),
+      };
     });
   }, [rowCol]);
 
@@ -125,13 +140,7 @@ const App = () => {
           </React.Fragment>
         )}
       </p>
-      <Maze
-        coordinate={coordinate}
-        setCoordinate={setCoordinate}
-        maze={maze}
-        setMaze={setMaze}
-        rowCol={rowCol}
-      />
+      <Maze maze={maze} setMaze={setMaze} rowCol={rowCol} />
     </div>
   );
 };

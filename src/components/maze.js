@@ -7,7 +7,6 @@ const Maze = (props) => {
   const IntervalRef = useRef(null);
 
   const onStart = () => {
-    props.setCoordinate({ x: 0, y: 0 });
     const dfs = (x, y) => {
       const MAX_X = props.maze.mazeMap[0].length;
       const MAX_Y = props.maze.mazeMap.length;
@@ -86,6 +85,7 @@ const Maze = (props) => {
       }
       props.setMaze({
         ...props.maze,
+        coordinate: { x: 0, y: 0 },
         end: { x: MAX_X - 1, y: MAX_Y - 1 },
         points: points,
         mazeMap: props.maze.mazeMap.map((arr, y) => {
@@ -118,7 +118,7 @@ const Maze = (props) => {
   const onClick = (e) => {
     const MAX_X = props.maze.mazeMap[0].length;
     const MAX_Y = props.maze.mazeMap.length;
-    const num = Number(
+    const num = parseInt(
       e.target.parentElement.dataset.num ||
         e.target.parentElement.parentElement.dataset.num
     );
@@ -128,6 +128,8 @@ const Maze = (props) => {
     }
     if (status) {
       const dfs = (x, y, targetX, targetY) => {
+        console.log("num", num);
+        console.log(props.maze.mazeMap[targetY][targetX]);
         if (!props.maze.mazeMap[targetY][targetX]) {
           console.log("벽");
         }
@@ -182,12 +184,12 @@ const Maze = (props) => {
               if (result[j].x === targetX && result[j].y === targetY) {
                 flag = false;
               }
-              // console.log(phase, { x: result[j].x, y: result[j].y });
+              console.log(phase, { x: result[j].x, y: result[j].y });
 
               queue.push({ x: result[j].x, y: result[j].y });
               visited[result[j].y][result[j].x] = true;
             }
-            // console.log(route[phase]);
+            console.log(route[phase]);
           }
           phase++;
         }
@@ -211,8 +213,8 @@ const Maze = (props) => {
       };
 
       const success = dfs(
-        parseInt(props.coordinate.x),
-        parseInt(props.coordinate.y),
+        parseInt(props.maze.coordinate.x),
+        parseInt(props.maze.coordinate.y),
         num % props.rowCol.row,
         Math.floor(num / props.rowCol.row)
       );
@@ -225,13 +227,23 @@ const Maze = (props) => {
         const x = success[successIndex.current].x;
         const y = success[successIndex.current].y;
         if (successIndex.current >= success.length - 1) {
-          props.setCoordinate({ x: x, y: y });
+          props.setMaze((prev) => {
+            return {
+              ...prev,
+              coordinate: { x: x, y: y },
+            };
+          });
           moving.current = false;
           clearInterval(IntervalRef.current);
           successIndex.current = 0;
           return;
         }
-        props.setCoordinate({ x: x, y: y });
+        props.setMaze((prev) => {
+          return {
+            ...prev,
+            coordinate: { x: x, y: y },
+          };
+        });
         successIndex.current += 1;
       }, 100);
       const deepCopyMaze = JSON.parse(JSON.stringify(props.maze.mazeMap));
@@ -265,16 +277,18 @@ const Maze = (props) => {
   };
 
   useEffect(() => {
+    console.log("props");
     const pointsIndex = props.maze.points.findIndex(
-      (v) => v.x === props.coordinate.x && v.y === props.coordinate.y
+      (v) => v.x === props.maze.coordinate.x && v.y === props.maze.coordinate.y
     );
-
     if (pointsIndex !== -1) {
       const copyPoints = JSON.parse(JSON.stringify(props.maze.points));
       copyPoints.splice(pointsIndex, 1);
-      props.setMaze({ ...props.maze, points: copyPoints });
+      props.setMaze((prev) => {
+        return { ...prev, points: copyPoints };
+      });
     }
-  }, [props.coordinate]);
+  }, [props]);
   return (
     <div>
       <input
@@ -338,7 +352,8 @@ const Maze = (props) => {
                 <td key={"td " + x} data-num={bricks.index} onClick={onClick}>
                   {bricks.item ? (
                     <div>
-                      {props.coordinate.x === x && props.coordinate.y === y ? (
+                      {props.maze.coordinate.x === x &&
+                      props.maze.coordinate.y === y ? (
                         <div className="now"></div>
                       ) : (
                         <div
