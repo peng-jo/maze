@@ -1,3 +1,5 @@
+@import "./reset.scss";
+
 @font-face {
     font-family: 'TmonMonsori';
     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/TmonMonsori.woff') format('woff');
@@ -16,9 +18,13 @@
     font-weight: normal;
     font-style: normal;
 }
-
+.App {
+    height: 1080px;
+}
+.mg {
+    margin: 20px 0;
+}
 body {
-
     font-family: 'ChosunSg';
     background-color: #eee;
     .header {
@@ -26,7 +32,16 @@ body {
         font-size: 30px;
     }
     .info {
-        font-size: 12px;
+        font-weight: 700;
+        font-size: 14px;
+        span { 
+            width: 60px;
+            display: inline-block;
+            margin: 6px 6px 0 0;
+            &.w0 {
+                width: auto;
+            }
+        }
     }
     .cursor {
         cursor: Crosshair;
@@ -44,8 +59,10 @@ body {
         margin:10px 10px 0 0;
         border: none;
         &.button {
+            width: 100%;
+            height: 60px;
             background-color: #c9c9c9;
-            font-size: 12px;
+            font-size: 30px;
         }
         &.input {
             width: 30px;

@@ -1,12 +1,8 @@
-import { useRef, useState, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { VisualizeMaze } from "./VisualizeMaze";
 
 const Maze = (props) => {
-  const [status, setStatus] = useState(true);
-  const moving = useRef(false);
-  const successIndex = useRef(0);
-  const IntervalRef = useRef(null);
-
+  const interval = useRef(null);
   const onStart = () => {
     const dfs = (x, y) => {
       const MAX_X = props.maze.mazeMap[0].length;
@@ -86,6 +82,7 @@ const Maze = (props) => {
       }
       props.setMaze({
         ...props.maze,
+        started: true,
         coordinate: { x: 0, y: 0 },
         end: { x: MAX_X - 1, y: MAX_Y - 1 },
         points: points,
@@ -104,176 +101,18 @@ const Maze = (props) => {
     const result = dfs(0, 0);
     if (!result) {
       onStart();
-    }
-  };
-
-  const autoMove = () => {
-    setStatus(!status);
-    if (!status) {
-      document.querySelector(".maze").classList.add("cursor");
     } else {
-      document.querySelector(".maze").classList.remove("cursor");
-    }
-  };
-
-  const onClick = (e) => {
-    const MAX_X = props.maze.mazeMap[0].length;
-    const MAX_Y = props.maze.mazeMap.length;
-    const num = parseInt(
-      e.target.parentElement.dataset.num ||
-        e.target.parentElement.parentElement.dataset.num
-    );
-    if (moving.current) {
-      console.log("stop");
-      return;
-    }
-    if (status) {
-      const dfs = (x, y, targetX, targetY) => {
-        console.log("num", num);
-        console.log(props.maze.mazeMap[targetY][targetX]);
-        if (!props.maze.mazeMap[targetY][targetX]) {
-          console.log("벽");
-        }
-        const queue = [];
-        const route = [];
-        const success = [];
-        let phase = 0;
-        let flag = true;
-
-        const visited = props.maze.mazeMap.map((row) =>
-          row.map((v) => !v.item)
-        );
-        queue.push({ x: x, y: y });
-        visited[y][x] = true;
-        const check = (x, y) => {
-          if (x >= 0 && y >= 0 && MAX_X > x && MAX_Y > y && !visited[y][x]) {
-            return { x: x, y: y, r: true };
-          } else {
-            return { r: false };
-          }
-        };
-
-        while (flag) {
-          const length = queue.length;
-          if (length < 1) {
-            return false;
-          }
-          for (let k = 0; k < length; k++) {
-            const shifted = queue.shift();
-            const list = [
-              [0, 1],
-              [1, 0],
-              [0, -1],
-              [-1, 0],
-            ];
-            const result = list
-              .map((v) => check(shifted.x + v[0], shifted.y + v[1]))
-              .filter((v) => v.r);
-            if (result.length < 1) {
-              continue;
-            }
-
-            for (let j = 0; j < result.length; j++) {
-              if (flag) {
-                !route[phase]
-                  ? (route[phase] = [{ x: result[j].x, y: result[j].y }])
-                  : route[phase].push({
-                      x: result[j].x,
-                      y: result[j].y,
-                    });
-              }
-              if (result[j].x === targetX && result[j].y === targetY) {
-                flag = false;
-              }
-              console.log(phase, { x: result[j].x, y: result[j].y });
-
-              queue.push({ x: result[j].x, y: result[j].y });
-              visited[result[j].y][result[j].x] = true;
-            }
-            console.log(route[phase]);
-          }
-          phase++;
-        }
-        let target = { x: 0, y: 0 };
-        route.reverse().forEach((route, index) => {
-          if (index === 0) {
-            target.x = route[route.length - 1].x;
-            target.y = route[route.length - 1].y;
-            success.unshift({ ...target });
-          } else {
-            const result = route.filter(
-              (v) => Math.abs(target.x - v.x) + Math.abs(target.y - v.y) === 1
-            );
-            target.x = result[0].x;
-            target.y = result[0].y;
-            success.unshift({ ...result[0] });
-          }
-        });
-        console.log("success", success);
-        return success;
-      };
-
-      const success = dfs(
-        parseInt(props.maze.coordinate.x),
-        parseInt(props.maze.coordinate.y),
-        num % props.rowCol.row,
-        Math.floor(num / props.rowCol.row)
-      );
-      if (!success) {
-        console.log("도달 할 수 없음.");
-        return false;
-      }
-      moving.current = true;
-      IntervalRef.current = setInterval(() => {
-        const x = success[successIndex.current].x;
-        const y = success[successIndex.current].y;
-        if (successIndex.current >= success.length - 1) {
-          props.setMaze((prev) => {
-            return {
-              ...prev,
-              coordinate: { x: x, y: y },
-            };
-          });
-          moving.current = false;
-          clearInterval(IntervalRef.current);
-          successIndex.current = 0;
-          return;
-        }
+      interval.current = setInterval(() => {
         props.setMaze((prev) => {
+          if (prev.time < 2) {
+            clearInterval(interval.current);
+          }
           return {
             ...prev,
-            coordinate: { x: x, y: y },
+            time: prev.time - 1,
           };
         });
-        successIndex.current += 1;
-      }, 100);
-      const deepCopyMaze = JSON.parse(JSON.stringify(props.maze.mazeMap));
-      deepCopyMaze.forEach((row, y) => {
-        row.forEach((v, x) => {
-          deepCopyMaze[y][x].line = false;
-        });
-      });
-      success.forEach((v) => {
-        deepCopyMaze[v.y][v.x].line = true;
-      });
-      props.setMaze({ ...props.maze, mazeMap: deepCopyMaze });
-    } else {
-      console.log(num);
-      props.setMaze({
-        ...props.maze,
-        mazeMap: props.maze.mazeMap.map((arr) => {
-          return arr.map((el) => {
-            if (el.index === num) {
-              return {
-                ...el,
-                item: !el.item,
-              };
-            } else {
-              return { ...el };
-            }
-          });
-        }),
-      });
+      }, 1000);
     }
   };
 
@@ -281,21 +120,36 @@ const Maze = (props) => {
     const pointsIndex = props.maze.points.findIndex(
       (v) => v.x === props.maze.coordinate.x && v.y === props.maze.coordinate.y
     );
+
+    if (
+      props.maze.coordinate.x === props.maze.end.x &&
+      props.maze.coordinate.y === props.maze.end.y &&
+      props.maze.started
+    ) {
+      props.setMaze((prev) => {
+        clearInterval(interval.current);
+
+        return { ...prev, time: -1, started: true };
+      });
+      return;
+    }
+
     if (pointsIndex !== -1) {
       const copyPoints = JSON.parse(JSON.stringify(props.maze.points));
       copyPoints.splice(pointsIndex, 1);
       props.setMaze((prev) => {
-        return { ...prev, points: copyPoints };
+        return { ...prev, points: copyPoints, point: prev.point + 5 };
       });
     }
   }, [props]);
+
   return (
     <div>
       <input
         className="button"
         type="button"
         onClick={onStart}
-        value="미로 랜덤 생성"
+        value="게임시작"
         disabled={
           !(
             props.rowCol.row >= 3 &&
@@ -305,34 +159,32 @@ const Maze = (props) => {
           )
         }
       />
-      <input
-        className="button"
-        type="button"
-        onClick={autoMove}
-        value={status ? "자동 움직이기" : "벽 생성/삭제"}
-        disabled={
-          !(
-            props.rowCol.row >= 3 &&
-            props.rowCol.col >= 3 &&
-            props.rowCol.col % 2 === 1 &&
-            props.rowCol.row % 2 === 1
-          )
-        }
-      />
-      <p className="info">
-        {status
-          ? "자동으로 움직일 곳을 클릭해 주세요"
-          : "클릭하면 벽을 만들거나 없앨수 있습니다."}
-      </p>
-      <p className="info">
-        <i className="fa-solid fa-heart"></i> x {props.maze.points.length}
-      </p>
-      <table className="maze">
-        <thead></thead>
-        <tbody>
-          <VisualizeMaze maze={props.maze} moving={moving} />
-        </tbody>
-      </table>
+      {props.maze.started && (
+        <React.Fragment>
+          <p className="info">
+            <span>남은시간</span>
+            <span className="w0">:</span>
+            <span className="w0">{props.maze.time} 초</span>
+            <br />
+            <span>점수</span>
+            <span className="w0">:</span>
+            <span className="w0">{props.maze.point}</span>
+            <br />
+            <span>
+              <i className="fa-solid fa-heart"></i>
+            </span>
+            <span className="w0">:</span>
+            <span className="w0">{props.maze.points.length}</span>
+          </p>
+
+          <table className="maze">
+            <thead></thead>
+            <tbody>
+              <VisualizeMaze maze={props.maze} />
+            </tbody>
+          </table>
+        </React.Fragment>
+      )}
     </div>
   );
 };

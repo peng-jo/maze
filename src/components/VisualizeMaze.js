@@ -54,9 +54,6 @@ export const VisualizeMaze = (props) => {
               <td key={"td " + bricks.index} data-num={bricks.index}>
                 {bricks.item ? (
                   <div className="big">
-                    {/* {x === col + start_x &&
-                      y === start_y + row &&
-                      console.log("x", x, col + start_x, "y", y, start_y + row)} */}
                     {x === col + start_x && y === row ? (
                       <div className="now big"></div>
                     ) : (
