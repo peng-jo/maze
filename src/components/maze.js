@@ -129,7 +129,7 @@ const Maze = (props) => {
       props.setMaze((prev) => {
         clearInterval(interval.current);
 
-        return { ...prev, time: -1, started: true };
+        return { ...prev, time: -3, started: true };
       });
       return;
     }
@@ -144,7 +144,7 @@ const Maze = (props) => {
   }, [props]);
 
   return (
-    <div>
+    <div className="maze-container">
       <input
         className="button"
         type="button"
@@ -156,25 +156,18 @@ const Maze = (props) => {
             props.rowCol.col >= 3 &&
             props.rowCol.col % 2 === 1 &&
             props.rowCol.row % 2 === 1
-          )
+          ) || props.maze.started
         }
       />
       {props.maze.started && (
         <React.Fragment>
           <p className="info">
-            <span>남은시간</span>
-            <span className="w0">:</span>
-            <span className="w0">{props.maze.time} 초</span>
-            <br />
-            <span>점수</span>
-            <span className="w0">:</span>
-            <span className="w0">{props.maze.point}</span>
-            <br />
-            <span>
-              <i className="fa-solid fa-heart"></i>
-            </span>
-            <span className="w0">:</span>
-            <span className="w0">{props.maze.points.length}</span>
+            <i className="fa-solid fa-hourglass-end"></i>
+            <span>{props.maze.time}</span>
+            <i className="fa-solid fa-star"></i>
+            <span>{props.maze.point}</span>
+            <i className="fa-solid fa-heart"></i>
+            <span>{props.maze.points.length}</span>
           </p>
 
           <table className="maze">

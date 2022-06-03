@@ -1,6 +1,6 @@
 import React from "react";
-import { uuid } from "../tools/uuid";
 export const VisualizeMaze = (props) => {
+  let index = 0;
   const elements = () => {
     const visualSize = 5;
     const element = [];
@@ -29,13 +29,12 @@ export const VisualizeMaze = (props) => {
       return;
     }
     const wall = () => {
+      index++;
       element.push(
-        <tr key={uuid()}>
-          {[...new Array(visualSize + 2)].map((el, index) => (
-            <td key={uuid()}>
-              <div className="bricks big"></div>
-            </td>
-          ))}
+        <tr key={"tr" + index}>
+          <td colSpan={visualSize + 2} key={"td" + index}>
+            <div className="wall row"></div>
+          </td>
         </tr>
       );
     };
@@ -45,9 +44,11 @@ export const VisualizeMaze = (props) => {
       index++;
       element.push(
         <tr key={"tr" + row + index}>
-          <td>
-            <div className="bricks big"></div>
-          </td>
+          {index === 1 && (
+            <td rowSpan={visualSize}>
+              <div className="wall col"></div>
+            </td>
+          )}
           {[...new Array(visualSize)].map((el, col) => {
             const bricks = props.maze.mazeMap[row][col + start_x];
             return (
@@ -78,9 +79,11 @@ export const VisualizeMaze = (props) => {
               </td>
             );
           })}
-          <td>
-            <div className="bricks big"></div>
-          </td>
+          {index === 1 && (
+            <td rowSpan={visualSize}>
+              <div className="wall col"></div>
+            </td>
+          )}
         </tr>
       );
     }

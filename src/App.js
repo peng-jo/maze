@@ -4,12 +4,12 @@ import React, { useState, useEffect } from "react";
 
 const App = () => {
   const [rowCol, setRowCol] = useState({
-    col: 19,
-    row: 19,
+    col: 29,
+    row: 29,
   });
   const [maze, setMaze] = useState({
     score: 0,
-    time: 60,
+    time: rowCol.col * 3,
     started: false,
     point: 0,
     points: [],
@@ -106,10 +106,14 @@ const App = () => {
   useEffect(() => {
     if (maze.time < 1) {
       let bricksIndex = 0;
+      let point = 0;
+      if (maze.time === -3) {
+        point = maze.point;
+      }
       setMaze({
         ...maze,
-        score: maze.score + maze.point,
-        time: 60,
+        score: maze.score + point,
+        time: rowCol.col * 3,
         started: false,
         point: 0,
         points: [],
@@ -127,28 +131,31 @@ const App = () => {
         coordinate: { x: 0, y: 0 },
       });
     }
-  }, [maze.time]);
+  }, [maze, rowCol]);
 
   return (
     <div className="App" onKeyDown={onKeyDown} tabIndex="0">
       <p className="header">미로 게임</p>
       <p className="info mg">최종 : {maze.score} 점</p>
-      세로
-      <input
-        className="col input"
-        name="col"
-        value={rowCol.col}
-        readOnly={true}
-      />
-      <span className="mr">칸</span>
-      가로
-      <input
-        className="row input"
-        name="row"
-        value={rowCol.row}
-        readOnly={true}
-      />
-      <span className="mr">칸</span>
+      <div>
+        세로
+        <input
+          className="col input"
+          name="col"
+          value={rowCol.col}
+          readOnly={true}
+        />
+        <span className="mr">칸</span>
+        가로
+        <input
+          className="row input"
+          name="row"
+          value={rowCol.row}
+          readOnly={true}
+        />
+        <span className="mr">칸</span>
+      </div>
+
       <Maze maze={maze} setMaze={setMaze} rowCol={rowCol} />
     </div>
   );

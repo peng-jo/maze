@@ -20,6 +20,9 @@
 }
 .App {
     height: 1080px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 .mg {
     margin: 20px 0;
@@ -28,19 +31,18 @@ body {
     font-family: 'ChosunSg';
     background-color: #eee;
     .header {
+        padding: 20px;
         font-family: 'ChosunBg';
-        font-size: 30px;
+        font-size: 60px;
     }
     .info {
+        margin: 8px 0;
         font-weight: 700;
-        font-size: 14px;
+        font-size: 22px;
         span { 
-            width: 60px;
+            width: fit-content;
             display: inline-block;
-            margin: 6px 6px 0 0;
-            &.w0 {
-                width: auto;
-            }
+            margin: 6px 12px;
         }
     }
     .cursor {
@@ -70,9 +72,16 @@ body {
         }
     }
 }
-
+.maze-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
 .maze {
-    border: 1px solid #000;
+    @media (max-width: 440px) {
+        width: 100%;
+    }
     border-spacing: 0px;
     border-collapse: separate;
     overflow: hidden;
@@ -88,10 +97,38 @@ body {
             border: 0.05px solid rgb(0, 0, 0);
         }
         .big {
-            width: 40px; height: 40px;
+            width: 100px; height: 100px;
+            @media (max-width: 440px) {
+                width: calc(100vw / 5 - 8px);
+                height: 70px;
+            }
         }
         .bricks {
             background-color: rgb(201, 201, 201);
+        }
+        .wall {
+            width: 10px;
+            height: 10px;
+            background-color: rgb(201, 201, 201);
+            &.row {
+                width: auto;
+                border-top: 1px solid rgb(201, 201, 201);
+                border-bottom: 1px solid rgb(201, 201, 201);
+                border-left:none;
+                border-right:none;
+            }
+            &.col {
+                border-bottom: 1px solid rgb(201, 201, 201);
+                border-top: 1px solid rgb(201, 201, 201);
+                border-left:none;
+                border-right:none;
+                
+                height: 508px;
+                @media (max-width: 440px) {
+                    height: 358px;
+
+                }
+            }
         }
         .now {
             width: 6px;
@@ -100,8 +137,8 @@ body {
             border-radius: 50px;
             border: none;
             &.big {
-                width: 20px;
-                height: 20px;
+                width: 30px;
+                height: 30px;
             }
         }
         .line {
@@ -114,7 +151,7 @@ body {
             color: #fff;
             &.big {
                 position: relative;
-                font-size: 20px;
+                font-size: 30px;
                 &::before {
                     position: absolute;
                     top: 50%; left: 50%;
