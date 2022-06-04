@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { VisualizeMaze } from "./VisualizeMaze";
+import VisualizeMaze from "./VisualizeMaze";
 
 const Maze = (props) => {
   const interval = useRef(null);
@@ -66,8 +66,8 @@ const Maze = (props) => {
               if (result[j].x + 1 === MAX_X && result[j].y + 1 === MAX_Y) {
                 flag = false;
               }
-
-              if (j === 1 && Math.floor(Math.random() * 10)) {
+              //길 갯수 최대5개
+              if (j === 1 && Math.floor(Math.random() * 5)) {
                 queue.push({ x: result[j].x, y: result[j].y });
               }
               visited[result[j].y][result[j].x] = true;
@@ -95,6 +95,7 @@ const Maze = (props) => {
           });
         }),
       });
+      //#start
       console.log(visited, props.maze);
       return true;
     };
@@ -128,8 +129,14 @@ const Maze = (props) => {
     ) {
       props.setMaze((prev) => {
         clearInterval(interval.current);
-
-        return { ...prev, time: -3, started: true };
+        return {
+          ...prev,
+          recent: [],
+          time: props.rowCol.col * 3,
+          score: prev.score + props.maze.point,
+          started: false,
+        };
+        //#end
       });
       return;
     }
@@ -140,6 +147,35 @@ const Maze = (props) => {
       props.setMaze((prev) => {
         return { ...prev, points: copyPoints, point: prev.point + 5 };
       });
+    }
+  }, [props]);
+
+  useEffect(() => {
+    const { maze, rowCol, setMaze } = props;
+    if (maze.time < 1) {
+      let bricksIndex = 0;
+      setMaze({
+        ...maze,
+        time: rowCol.col * 3,
+        started: false,
+        point: 0,
+        points: [],
+        recent: [],
+        mazeMap: [...new Array(rowCol.col)].map(() => {
+          return [...new Array(rowCol.row)].map(() => {
+            bricksIndex++;
+            return {
+              index: bricksIndex,
+              item: true,
+            };
+          });
+        }),
+        end: { x: rowCol.col, y: rowCol.row },
+        start: { x: 0, y: 0 },
+        coordinate: { x: 0, y: 0 },
+      });
+      //#end
+      return;
     }
   }, [props]);
 

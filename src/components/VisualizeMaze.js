@@ -1,5 +1,5 @@
 import React from "react";
-export const VisualizeMaze = (props) => {
+const VisualizeMaze = (props) => {
   let index = 0;
   const elements = () => {
     const visualSize = 5;
@@ -54,24 +54,28 @@ export const VisualizeMaze = (props) => {
             return (
               <td key={"td " + bricks.index} data-num={bricks.index}>
                 {bricks.item ? (
-                  <div className="big">
+                  <div
+                    className={
+                      props.maze.recent.findIndex(
+                        (v) => v.x === col + start_x && v.y === row
+                      ) !== -1
+                        ? "big line"
+                        : "big"
+                    }
+                  >
                     {x === col + start_x && y === row ? (
                       <div className="now big"></div>
                     ) : (
-                      <div data-num={bricks.index}>
-                        {props.maze.points.findIndex(
-                          (v) => v.x === col + start_x && v.y === row
-                        ) !== -1 && (
-                          <i className="fa-solid fa-heart points big"></i>
-                        )}
-                        {props.maze.end.x === col + start_x &&
-                        props.maze.end.y === row ? (
-                          <i className="fa-solid fa-person-running points big"></i>
-                        ) : (
-                          ""
-                        )}
-                      </div>
+                      props.maze.points.findIndex(
+                        (v) => v.x === col + start_x && v.y === row
+                      ) !== -1 && (
+                        <i className="fa-solid fa-heart points big"></i>
+                      )
                     )}
+                    {props.maze.end.x === col + start_x &&
+                      props.maze.end.y === row && (
+                        <i className="fa-solid fa-person-running points big"></i>
+                      )}
                   </div>
                 ) : (
                   <div className="bricks big"></div>
@@ -93,3 +97,7 @@ export const VisualizeMaze = (props) => {
 
   return elements();
 };
+
+export default React.memo(VisualizeMaze, (prevProps, nextProps) => {
+  return prevProps.maze.coordinate === nextProps.maze.coordinate;
+});

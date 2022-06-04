@@ -14,6 +14,7 @@ const App = () => {
     point: 0,
     points: [],
     mazeMap: [],
+    recent: [],
     end: { x: 0, y: 0 },
     start: { x: 0, y: 0 },
     coordinate: { x: 0, y: 0 },
@@ -37,10 +38,17 @@ const App = () => {
   //   });
   // };
   const onKeyDown = (e) => {
+    if (!maze.started) {
+      return;
+    }
     const MAX_X = rowCol.col;
     const MAX_Y = rowCol.row;
     const x = maze.coordinate.x;
     const y = maze.coordinate.y;
+    const recent = [...maze.recent]
+      .filter((recent) => recent.x !== x || recent.y !== y)
+      .concat({ x, y })
+      .slice(-13);
     switch (e.code) {
       case "ArrowDown":
         if (
@@ -51,6 +59,7 @@ const App = () => {
           setMaze({
             ...maze,
             coordinate: { x: x, y: y + 1 },
+            recent,
           });
         }
         break;
@@ -59,6 +68,7 @@ const App = () => {
           setMaze({
             ...maze,
             coordinate: { x: x, y: y - 1 },
+            recent,
           });
         }
         break;
@@ -67,6 +77,7 @@ const App = () => {
           setMaze({
             ...maze,
             coordinate: { x: x - 1, y: y },
+            recent,
           });
         }
         break;
@@ -75,6 +86,7 @@ const App = () => {
           setMaze({
             ...maze,
             coordinate: { x: x + 1, y: y },
+            recent,
           });
         }
         break;
@@ -102,36 +114,6 @@ const App = () => {
       };
     });
   }, [rowCol]);
-
-  useEffect(() => {
-    if (maze.time < 1) {
-      let bricksIndex = 0;
-      let point = 0;
-      if (maze.time === -3) {
-        point = maze.point;
-      }
-      setMaze({
-        ...maze,
-        score: maze.score + point,
-        time: rowCol.col * 3,
-        started: false,
-        point: 0,
-        points: [],
-        mazeMap: [...new Array(rowCol.col)].map(() => {
-          return [...new Array(rowCol.row)].map(() => {
-            bricksIndex++;
-            return {
-              index: bricksIndex,
-              item: true,
-            };
-          });
-        }),
-        end: { x: rowCol.col, y: rowCol.row },
-        start: { x: 0, y: 0 },
-        coordinate: { x: 0, y: 0 },
-      });
-    }
-  }, [maze, rowCol]);
 
   return (
     <div className="App" onKeyDown={onKeyDown} tabIndex="0">
