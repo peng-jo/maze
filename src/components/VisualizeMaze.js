@@ -1,8 +1,28 @@
 import React from "react";
 const VisualizeMaze = (props) => {
   let index = 0;
+  const navigate = (num) => {
+    const { x, y } = props.maze.coordinate;
+    const colSize = props.maze.mazeMap[0].length;
+    const coor = y * colSize + x;
+    const result = (num - coor) / colSize;
+    console.log(result);
+    if (result < 0) {
+      if (Math.abs(result % 1) === 0) {
+        props.move("UP");
+      } else {
+        props.move("LEFT");
+      }
+    } else if (result > 0) {
+      if (Math.abs(result % 1) === 0) {
+        props.move("DOWN");
+      } else {
+        props.move("RIGHT");
+      }
+    }
+  };
   const elements = () => {
-    const visualSize = 5;
+    const visualSize = 7;
     const element = [];
     let x = props.maze.coordinate.x;
     let y = props.maze.coordinate.y;
@@ -10,19 +30,20 @@ const VisualizeMaze = (props) => {
     let start_y = 0;
     const MAX_X = props.maze.mazeMap.length;
     const MAX_Y = props.maze.mazeMap[0]?.length;
-    if (x - 2 < 0) {
+    const diff = (visualSize - (visualSize % 2)) / 2;
+    if (x - diff < 0) {
       start_x = 0;
-    } else if (x + 2 >= MAX_X) {
+    } else if (x + diff >= MAX_X) {
       start_x = MAX_X - visualSize;
     } else {
-      start_x = x - 2;
+      start_x = x - diff;
     }
-    if (y - 2 < 0) {
+    if (y - diff < 0) {
       start_y = 0;
-    } else if (y + 2 >= MAX_Y) {
+    } else if (y + diff >= MAX_Y) {
       start_y = MAX_Y - visualSize;
     } else {
-      start_y = y - 2;
+      start_y = y - diff;
     }
 
     if (MAX_X < 3 || MAX_Y < 3) {
@@ -55,6 +76,7 @@ const VisualizeMaze = (props) => {
               <td key={"td " + bricks.index} data-num={bricks.index}>
                 {bricks.item ? (
                   <div
+                    onClick={() => navigate(bricks.index)}
                     className={
                       props.maze.recent.findIndex(
                         (v) => v.x === col + start_x && v.y === row

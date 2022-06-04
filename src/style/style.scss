@@ -31,9 +31,37 @@ body {
     font-family: 'ChosunSg';
     background-color: #eee;
     .header {
+        position: relative;
         padding: 20px;
         font-family: 'ChosunBg';
         font-size: 60px;
+    }
+    .help {
+        font-size: 22px;
+        position: absolute;
+        top: 20px;
+        right: -20px;
+
+        &:hover > .tooltip {
+            display: block;
+        }
+        .tooltip {
+            border-radius: 30px;
+            font-family: 'ChosunSg';
+            font-size: 16px;
+            padding: 15px;
+            position: absolute;
+            width: 28vw;
+            height: fit-content;
+            display: none;
+            position: absolute;
+            z-index: 200;
+            top: 30px;
+            word-break: break-all;
+            word-spacing: 4px;
+            line-height: 19px;
+            background-color: #fff;
+        }
     }
     .info {
         margin: 8px 0;
@@ -78,6 +106,7 @@ body {
     align-items: center;
     width: 100%;
 }
+
 .maze {
     @media (max-width: 440px) {
         width: 100%;
@@ -97,10 +126,10 @@ body {
             border: 0.05px solid rgb(0, 0, 0);
         }
         .big {
-            width: 100px; height: 100px;
+            width: 60px; height: 60px;
             @media (max-width: 440px) {
-                width: calc(100vw / 5 - 8px);
-                height: 70px;
+                width: calc(100vw / 7 - 6px);
+                height: 30px;
             }
         }
         .bricks {
@@ -123,10 +152,9 @@ body {
                 border-left:none;
                 border-right:none;
                 
-                height: 508px;
+                height: 431px;
                 @media (max-width: 440px) {
-                    height: 358px;
-
+                    height: 222px;
                 }
             }
         }
@@ -139,7 +167,12 @@ body {
             &.big {
                 width: 30px;
                 height: 30px;
+                @media (max-width: 440px) {
+                    width: 15px;
+                    height: 15px;
+                }
             }
+          
         }
         .line {
             background-color: rgba(92,19,19, 0.8);
@@ -152,6 +185,9 @@ body {
             &.big {
                 position: relative;
                 font-size: 30px;
+                @media (max-width: 440px) {
+                    font-size: 16px;
+                }
                 &::before {
                     position: absolute;
                     top: 50%; left: 50%;

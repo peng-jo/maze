@@ -66,8 +66,8 @@ const Maze = (props) => {
               if (result[j].x + 1 === MAX_X && result[j].y + 1 === MAX_Y) {
                 flag = false;
               }
-              //길 갯수 최대5개
-              if (j === 1 && Math.floor(Math.random() * 5)) {
+
+              if (j === 1 && 1 !== Math.floor(Math.random() * 10)) {
                 queue.push({ x: result[j].x, y: result[j].y });
               }
               visited[result[j].y][result[j].x] = true;
@@ -145,7 +145,24 @@ const Maze = (props) => {
       const copyPoints = JSON.parse(JSON.stringify(props.maze.points));
       copyPoints.splice(pointsIndex, 1);
       props.setMaze((prev) => {
-        return { ...prev, points: copyPoints, point: prev.point + 5 };
+        return {
+          ...prev,
+          points: copyPoints,
+          point: prev.point + 1,
+          time: prev.time + 3,
+        };
+      });
+    } else if (pointsIndex !== -1) {
+      props.setMaze((prev) => {
+        clearInterval(interval.current);
+        return {
+          ...prev,
+          recent: [],
+          time: props.rowCol.col * 3,
+          score: prev.score + props.maze.point * 5,
+          started: false,
+        };
+        //#end
       });
     }
   }, [props]);
@@ -181,20 +198,22 @@ const Maze = (props) => {
 
   return (
     <div className="maze-container">
-      <input
-        className="button"
-        type="button"
-        onClick={onStart}
-        value="게임시작"
-        disabled={
-          !(
-            props.rowCol.row >= 3 &&
-            props.rowCol.col >= 3 &&
-            props.rowCol.col % 2 === 1 &&
-            props.rowCol.row % 2 === 1
-          ) || props.maze.started
-        }
-      />
+      {!props.maze.started && (
+        <input
+          className="button"
+          type="button"
+          onClick={onStart}
+          value="게임시작"
+          disabled={
+            !(
+              props.rowCol.row >= 3 &&
+              props.rowCol.col >= 3 &&
+              props.rowCol.col % 2 === 1 &&
+              props.rowCol.row % 2 === 1
+            ) || props.maze.started
+          }
+        />
+      )}
       {props.maze.started && (
         <React.Fragment>
           <p className="info">
@@ -205,11 +224,10 @@ const Maze = (props) => {
             <i className="fa-solid fa-heart"></i>
             <span>{props.maze.points.length}</span>
           </p>
-
           <table className="maze">
             <thead></thead>
             <tbody>
-              <VisualizeMaze maze={props.maze} />
+              <VisualizeMaze maze={props.maze} move={props.move} />
             </tbody>
           </table>
         </React.Fragment>
