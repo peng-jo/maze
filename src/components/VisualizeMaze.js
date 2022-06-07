@@ -66,7 +66,7 @@ const VisualizeMaze = (props) => {
       element.push(
         <tr key={"tr" + row + index}>
           {index === 1 && (
-            <td rowSpan={visualSize}>
+            <td rowSpan={visualSize} style={{ backgroundColor: "#c9c9c9" }}>
               <div className="wall col"></div>
             </td>
           )}
@@ -106,7 +106,7 @@ const VisualizeMaze = (props) => {
             );
           })}
           {index === 1 && (
-            <td rowSpan={visualSize}>
+            <td rowSpan={visualSize} style={{ backgroundColor: "#c9c9c9" }}>
               <div className="wall col"></div>
             </td>
           )}
