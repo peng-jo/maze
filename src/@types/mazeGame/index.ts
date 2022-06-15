@@ -13,7 +13,7 @@ export interface rowCol {
   col: number;
 }
 
-export interface mazeGame {
+export interface MazeGameType {
   score: number;
   time: number;
   started: boolean;

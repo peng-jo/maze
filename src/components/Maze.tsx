@@ -43,6 +43,10 @@ const Maze = (props: mazeProps) => {
   };
 
   useEffect(() => {
+    const target: any = document.querySelector(".target");
+    if (target) {
+      target.focus();
+    }
     //도착 지점에 갔을때
     const pointsIndex = props.maze.points.findIndex(
       (v) => v.x === props.maze.coordinate.x && v.y === props.maze.coordinate.y
