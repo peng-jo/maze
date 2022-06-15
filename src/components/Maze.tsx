@@ -1,116 +1,33 @@
 import React, { useEffect, useRef } from "react";
 import { mazeProps } from "../@types/maze";
 import VisualizeMaze from "./VisualizeMaze";
-
+import bfs from "./maker/bfs";
 
 const Maze = (props: mazeProps) => {
+  const MAX_X = props.maze.mazeMap[0]?.length;
+  const MAX_Y = props.maze.mazeMap?.length;
   const interval = useRef<NodeJS.Timeout>();
   const onStart = () => {
-    const bfs = (x: number, y: number) => {
-      const MAX_X = props.maze.mazeMap[0].length;
-      const MAX_Y = props.maze.mazeMap.length;
-      const points = [];
-      const queue: { x: number, y: number }[]  = [];
-      let flag = true;
-      const visited = new Array(MAX_Y)
-        .fill(null)
-        .map((v) => new Array(MAX_X).fill(null));
-      queue.push({ x: x, y: y });
-      visited[0][0] = true;
-      const check = (x: number, y: number, dx: number, dy: number) => {
-        const rx = x + dx;
-        const rx2 = x + dx * 2;
-        const ry = y + dy;
-        const ry2 = y + dy * 2;
-        if (
-          rx2 < MAX_X &&
-          ry2 < MAX_Y &&
-          rx2 >= 0 &&
-          ry2 >= 0 &&
-          !visited[ry][rx] &&
-          !visited[ry2][rx2]
-        ) {
-          return {
-            result: [
-              { x: rx, y: ry },
-              { x: rx2, y: ry2 },
-            ],
-            r: true,
-          };
-        } else {
-          return { x: x, y: y, r: false };
-        }
-      };
-
-      while (flag) {
-        const length = queue.length;
-        if (length < 1) {
-          return false;
-        }
-        for (let k = 0; k < length; k++) {
-          const shifted = queue.shift();
-          if (shifted === undefined) {
-            continue;
-          }
-          const list = [
-            [0, 1],
-            [1, 0],
-            [-1, 0],
-            [0, -1],
-          ]
-            .sort(() => Math.random() - 0.5)
-            .map((v) => {
-              return check(shifted.x, shifted.y, v[0], v[1]);
-            })
-            .filter((v) => v.r);
-          const random = Math.floor(Math.random() * list.length);
-          if (list.length < 1) break;
-          for (let i = 0; i < random + 1; i++) {
-            const result = list[i].result;
-            if (result === undefined) {
-              continue;
-            }
-            for (let j = 0; j < result.length; j++) {
-              if (result[j].x + 1 === MAX_X && result[j].y + 1 === MAX_Y) {
-                flag = false;
-              }
-
-              if (j === 1 && 1 !== Math.floor(Math.random() * 10)) {
-                queue.push({ x: result[j].x, y: result[j].y });
-              }
-              visited[result[j].y][result[j].x] = true;
-              if (Math.floor(Math.random() * 20) < 1) {
-                if (result[j].x !== MAX_X - 1 && result[j].y !== MAX_Y - 1) {
-                  points.push({ x: result[j].x, y: result[j].y });
-                }
-              }
-            }
-          }
-        }
-      }
+    const result = bfs(0, 0, MAX_X, MAX_Y);
+    if (!result.visited[MAX_Y - 1][MAX_X - 1]) {
+      onStart();
+    } else {
       props.setMaze({
         ...props.maze,
         started: true,
         coordinate: { x: 0, y: 0 },
         end: { x: MAX_X - 1, y: MAX_Y - 1 },
-        points: points,
+        points: result.points,
         mazeMap: props.maze.mazeMap.map((arr, y) => {
           return arr.map((el, x) => {
             return {
               ...el,
-              item: visited[y][x],
+              item: result.visited[y][x],
             };
           });
         }),
       });
-      //#start
-      console.log(visited, props.maze);
-      return true;
-    };
-    const result = bfs(0, 0);
-    if (!result) {
-      onStart();
-    } else {
+
       interval.current = setInterval(() => {
         props.setMaze((prev) => {
           if (prev.time < 2) {
@@ -126,6 +43,7 @@ const Maze = (props: mazeProps) => {
   };
 
   useEffect(() => {
+    //도착 지점에 갔을때
     const pointsIndex = props.maze.points.findIndex(
       (v) => v.x === props.maze.coordinate.x && v.y === props.maze.coordinate.y
     );
@@ -148,7 +66,7 @@ const Maze = (props: mazeProps) => {
       });
       return;
     }
-
+    //포인트 얻었을때
     if (pointsIndex !== -1) {
       const copyPoints = JSON.parse(JSON.stringify(props.maze.points));
       copyPoints.splice(pointsIndex, 1);
@@ -161,6 +79,7 @@ const Maze = (props: mazeProps) => {
         };
       });
     } else if (pointsIndex !== -1) {
+      //포인트를 전부 얻었을때
       props.setMaze((prev) => {
         clearInterval(interval.current);
         return {
@@ -177,6 +96,7 @@ const Maze = (props: mazeProps) => {
 
   useEffect(() => {
     const { maze, rowCol, setMaze } = props;
+    //시간제한
     if (maze.time < 1) {
       let bricksIndex = 0;
       setMaze({

@@ -1,4 +1,4 @@
-interface xy {
+export interface xy {
   x: number,
   y: number
 }
