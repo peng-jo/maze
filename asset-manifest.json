@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/maze/static/css/main.8a9130c4.css",
-    "main.js": "/maze/static/js/main.bfabe5d5.js",
+    "main.js": "/maze/static/js/main.bc666982.js",
     "index.html": "/maze/index.html",
     "main.8a9130c4.css.map": "/maze/static/css/main.8a9130c4.css.map",
-    "main.bfabe5d5.js.map": "/maze/static/js/main.bfabe5d5.js.map"
+    "main.bc666982.js.map": "/maze/static/js/main.bc666982.js.map"
   },
   "entrypoints": [
     "static/css/main.8a9130c4.css",
-    "static/js/main.bfabe5d5.js"
+    "static/js/main.bc666982.js"
   ]
 }
