@@ -1,21 +1,23 @@
 import React, { useEffect, useRef } from "react";
+import { mazeProps } from "../@types/maze";
 import VisualizeMaze from "./VisualizeMaze";
 
-const Maze = (props) => {
-  const interval = useRef(null);
+
+const Maze = (props: mazeProps) => {
+  const interval = useRef<NodeJS.Timeout>();
   const onStart = () => {
-    const dfs = (x, y) => {
+    const bfs = (x: number, y: number) => {
       const MAX_X = props.maze.mazeMap[0].length;
       const MAX_Y = props.maze.mazeMap.length;
       const points = [];
-      const queue = [];
+      const queue: { x: number, y: number }[]  = [];
       let flag = true;
       const visited = new Array(MAX_Y)
         .fill(null)
         .map((v) => new Array(MAX_X).fill(null));
       queue.push({ x: x, y: y });
       visited[0][0] = true;
-      const check = (x, y, dx, dy) => {
+      const check = (x: number, y: number, dx: number, dy: number) => {
         const rx = x + dx;
         const rx2 = x + dx * 2;
         const ry = y + dy;
@@ -47,6 +49,9 @@ const Maze = (props) => {
         }
         for (let k = 0; k < length; k++) {
           const shifted = queue.shift();
+          if (shifted === undefined) {
+            continue;
+          }
           const list = [
             [0, 1],
             [1, 0],
@@ -62,6 +67,9 @@ const Maze = (props) => {
           if (list.length < 1) break;
           for (let i = 0; i < random + 1; i++) {
             const result = list[i].result;
+            if (result === undefined) {
+              continue;
+            }
             for (let j = 0; j < result.length; j++) {
               if (result[j].x + 1 === MAX_X && result[j].y + 1 === MAX_Y) {
                 flag = false;
@@ -99,7 +107,7 @@ const Maze = (props) => {
       console.log(visited, props.maze);
       return true;
     };
-    const result = dfs(0, 0);
+    const result = bfs(0, 0);
     if (!result) {
       onStart();
     } else {
@@ -227,7 +235,7 @@ const Maze = (props) => {
           <table className="maze">
             <thead></thead>
             <tbody>
-              <VisualizeMaze maze={props.maze} move={props.move} />
+              <VisualizeMaze {...props} />
             </tbody>
           </table>
         </React.Fragment>

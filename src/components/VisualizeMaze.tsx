@@ -1,7 +1,10 @@
 import React from "react";
-const VisualizeMaze = (props) => {
+import { mazeProps } from "../@types/maze";
+
+
+const VisualizeMaze: React.FC<mazeProps> = (props): JSX.Element => {
   let index = 0;
-  const navigate = (num) => {
+  const navigate = (num: number) => {
     const { x, y } = props.maze.coordinate;
     const colSize = props.maze.mazeMap[0].length;
     const coor = y * colSize + x;
@@ -21,7 +24,7 @@ const VisualizeMaze = (props) => {
       }
     }
   };
-  const elements = () => {
+  const elements = ():JSX.Element => {
     const visualSize = 7;
     const element = [];
     let x = props.maze.coordinate.x;
@@ -46,9 +49,7 @@ const VisualizeMaze = (props) => {
       start_y = y - diff;
     }
 
-    if (MAX_X < 3 || MAX_Y < 3) {
-      return;
-    }
+    
     const wall = () => {
       index++;
       element.push(
@@ -114,12 +115,14 @@ const VisualizeMaze = (props) => {
       );
     }
     wall();
-    return element;
+    return <React.Fragment>{element.map((v)=>v)}</React.Fragment>;
   };
-
   return elements();
 };
 
-export default React.memo(VisualizeMaze, (prevProps, nextProps) => {
-  return prevProps.maze.coordinate === nextProps.maze.coordinate;
-});
+export default React.memo(
+  VisualizeMaze,
+  (prevProps, nextProps) => {
+    return prevProps.maze.coordinate === nextProps.maze.coordinate;
+  }
+);

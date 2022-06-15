@@ -1,13 +1,16 @@
 import "./style/style.scss";
 import Maze from "./components/Maze";
 import React, { useState, useEffect } from "react";
+import { mazeGame } from "./@types/mazeGame";
+
+
 
 const App = () => {
-  const [rowCol, setRowCol] = useState({
+  const [rowCol] = useState({
     col: 29,
     row: 29,
   });
-  const [maze, setMaze] = useState({
+  const [maze, setMaze] = useState<mazeGame>({
     score: 0,
     time: rowCol.col * 3,
     started: false,
@@ -19,25 +22,8 @@ const App = () => {
     start: { x: 0, y: 0 },
     coordinate: { x: 0, y: 0 },
   });
-  // const onChange = (e) => {
-  //   const { value, name } = e.target;
-  //   if (!Number.isInteger(parseInt(value))) {
-  //     setRowCol({
-  //       ...rowCol,
-  //       [name]: 0,
-  //     });
-  //     return;
-  //   }
-  //   if (value > 99) {
-  //     console.log("너무큼");
-  //     return;
-  //   }
-  //   setRowCol({
-  //     ...rowCol,
-  //     [name]: value < 1 ? 1 : parseInt(value),
-  //   });
-  // };
-  const move = (direction) => {
+
+  const move = (direction :string): void => {
     const MAX_X = rowCol.col;
     const MAX_Y = rowCol.row;
     const x = maze.coordinate.x;
@@ -98,7 +84,7 @@ const App = () => {
       default:
     }
   };
-  const onKeyDown = (e) => {
+  const onKeyDown = (e: React.KeyboardEvent) => {
     if (!maze.started) {
       return;
     }
@@ -142,7 +128,7 @@ const App = () => {
   }, [rowCol]);
 
   return (
-    <div className="App" onKeyDown={onKeyDown} tabIndex="0">
+    <div className="App" onKeyDown={onKeyDown} tabIndex={0}>
       <div className="header">
         미로 게임
         <div className="help">
