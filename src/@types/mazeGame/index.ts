@@ -1,14 +1,14 @@
-export interface xy {
+export interface Xy {
   x: number,
   y: number
 }
 
-interface mazeMap {
+interface MazeMap {
   item: boolean;
   index: number;
 }
 
-export interface rowCol {
+export interface RowCol {
   row: number;
   col: number;
 }
@@ -18,10 +18,10 @@ export interface MazeGameType {
   time: number;
   started: boolean;
   point: number;
-  points: Array<xy>;
-  mazeMap: Array<Array<mazeMap>>;
-  recent: Array<xy>;
-  end: xy;
-  start: xy;
-  coordinate: xy;
+  points: Array<Xy>;
+  mazeMap: Array<Array<MazeMap>>;
+  recent: Array<Xy>;
+  end: Xy;
+  start: Xy;
+  coordinate: Xy;
 }
