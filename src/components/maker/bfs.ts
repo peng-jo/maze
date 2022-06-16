@@ -1,8 +1,8 @@
-import { xy } from "../../@types/mazeGame";
+import { Xy } from "../../@types/mazeGame";
 
 const bfs = (x: number, y: number, MAX_X: number, MAX_Y: number) => {
-  const points: xy[] = [];
-  const queue: xy[] = [];
+  const points: Xy[] = [];
+  const queue: Xy[] = [];
   let flag: boolean = true;
   const visited:boolean[][] = new Array(MAX_Y)
     .fill(null)
