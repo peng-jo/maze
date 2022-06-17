@@ -3,7 +3,7 @@ export interface Xy {
   y: number
 }
 
-interface MazeMap {
+export interface MazeMap {
   item: boolean;
   index: number;
 }

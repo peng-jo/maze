@@ -1,5 +1,5 @@
 import React from "react";
-import { mazeProps } from "../@types/maze";
+import { mazeProps } from "../@types/mazeProps";
 
 interface MazeElementsProps extends mazeProps {
   navigate: (num: number) => void;

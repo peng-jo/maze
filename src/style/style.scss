@@ -37,6 +37,7 @@ body {
     font-family: 'ChosunSg';
     background-color: #eee;
     .header {
+        width: auto;
         position: relative;
         padding: 20px;
         font-family: 'ChosunBg';
@@ -99,6 +100,11 @@ body {
             height: 60px;
             background-color: #fff;
             font-size: 30px;
+        }
+        &.exit {
+            padding: 4px 10px;
+            margin: 10px 0 0 0;
+            background-color: #fff;
         }
         &.input {
             width: 30px;

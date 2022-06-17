@@ -1,6 +1,6 @@
 import React from "react";
-import { mazeProps } from "../@types/maze";
 import { MazeElements } from "./MazeElements";
+import { mazeProps } from "../@types/mazeProps";
 
 
 const VisualizeMaze = (props: mazeProps): JSX.Element => {
@@ -9,7 +9,6 @@ const VisualizeMaze = (props: mazeProps): JSX.Element => {
     const colSize = props.maze.mazeMap[0].length;
     const coor = y * colSize + x;
     const result = (num - coor) / colSize;
-    console.log(result);
     if (result < 0) {
       if (Math.abs(result % 1) === 0) {
         props.move("UP");

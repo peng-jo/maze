@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Maze from "./Maze";
+import { mazeMover } from "./maker/bfs";
 import { MazeGameType } from "../@types/mazeGame";
+
 
 const MazeGame = ():JSX.Element => {
   const [rowCol] = useState({
@@ -19,7 +21,10 @@ const MazeGame = ():JSX.Element => {
     start: { x: 0, y: 0 },
     coordinate: { x: 0, y: 0 },
   });
-
+  const moving = useRef<boolean>(false);
+  const successIndex = useRef<number>(0);
+  const IntervalRef = useRef<NodeJS.Timeout>();
+  
   const move = (direction :string): void => {
     const MAX_X = rowCol.col;
     const MAX_Y = rowCol.row;
@@ -81,11 +86,11 @@ const MazeGame = ():JSX.Element => {
       default:
     }
   };
+
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (!maze.started) {
       return;
     }
-
     switch (e.code) {
       case "ArrowDown":
         move("DOWN");
@@ -102,6 +107,47 @@ const MazeGame = ():JSX.Element => {
       default:
     }
   };
+
+  const mover = () => {
+    const success = mazeMover(
+      maze.coordinate.x,
+      maze.coordinate.y,
+      rowCol.row,
+      rowCol.col,
+      maze.mazeMap,
+      rowCol.row - 1,
+      rowCol.col - 1
+    );
+     if (!success || typeof success === "boolean") {
+       console.log("도달 할 수 없음.");
+       return false;
+     }
+     moving.current = true;
+
+     IntervalRef.current = setInterval(() => {
+      const x = success[successIndex.current].x;
+      const y = success[successIndex.current].y;
+      if (successIndex.current >= success.length - 1) {
+        setMaze((prev) => {
+          return {
+            ...prev,
+            coordinate: { x: x, y: y },
+          };
+        });
+        moving.current = false;
+        clearInterval(IntervalRef.current);
+        successIndex.current = 0;
+        return;
+      }
+      setMaze((prev) => {
+        return {
+          ...prev,
+          coordinate: { x: x, y: y },
+        };
+       });
+       successIndex.current += 1;
+     }, 100);
+  }
 
   useEffect(() => {
     if (rowCol.col % 2 === 0 || rowCol.row % 2 === 0) {
@@ -144,6 +190,16 @@ const MazeGame = ():JSX.Element => {
           />
           <span className="mr">칸</span>
         </div>
+        {maze.started && (
+          <input
+            type="button"
+            className="exit"
+            onClick={mover}
+            value="탈출"
+            readOnly={true}
+          ></input>
+        )}
+
         <Maze maze={maze} setMaze={setMaze} rowCol={rowCol} move={move} />
       </div>
     );

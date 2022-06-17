@@ -1,14 +1,15 @@
 import React, { useEffect, useRef } from "react";
-import { mazeProps } from "../@types/maze";
+import { mazeProps } from "../@types/mazeProps";
 import VisualizeMaze from "./VisualizeMaze";
-import bfs from "./maker/bfs";
+import {mazeMaker} from "./maker/bfs";
+
 
 const Maze = (props: mazeProps) => {
   const MAX_X = props.maze.mazeMap[0]?.length;
   const MAX_Y = props.maze.mazeMap?.length;
   const interval = useRef<NodeJS.Timeout>();
   const onStart = () => {
-    const result = bfs(0, 0, MAX_X, MAX_Y);
+    const result = mazeMaker(0, 0, MAX_X, MAX_Y);
     if (!result.visited[MAX_Y - 1][MAX_X - 1]) {
       onStart();
     } else {
