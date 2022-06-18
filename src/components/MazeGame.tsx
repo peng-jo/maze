@@ -196,6 +196,7 @@ const MazeGame = ():JSX.Element => {
             className="exit"
             onClick={mover}
             value="탈출"
+            disabled={moving.current}
             readOnly={true}
           ></input>
         )}
