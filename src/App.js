@@ -1,5 +1,5 @@
 import "./style/style.scss";
-import Maze from "./components/maze";
+import Maze from "./components/Maze";
 import React, { useState, useEffect } from "react";
 
 const App = () => {
